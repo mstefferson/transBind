@@ -4,11 +4,11 @@ Nc = 4;
 Nr = 2;
 numGr = Nr * Nc;
 % Temporary epsilon
-epsilonR = 0.1;
-epsilonC = 0;
+epsilonR = 0;
+epsilonC = 0.1;
 % Obstacle Mat
 obstGrid = zeros( Nr, Nc );
-obstGrid(1,1) = 1;
+obstGrid(2,1) = 1;
 obstGrid(2,2) = 1;
 % Find free sites
 freeSites = find( obstGrid == 0 );
@@ -28,10 +28,12 @@ for ii = 1:numFree
   if obstGrid(rIndObst) == 0 %empty
     rIndT = find( freeSites == rIndObst );
     Tl(ii,rIndT) =  Tl(ii,rIndT) + 1 / 4;
-    Te(ii,rIndT) =  Te(ii,rIndT) - 1 / 4;
+    if epsilonC ~= 0
+      Te(ii,rIndT) =  Te(ii,rIndT) - 1 / 4;
+    end
   else
     Tl(ii,ii) = Tl(ii,ii) + 1 / 4;
-    if epsilonC ~= 0 
+    if epsilonC ~= 0
       Te(ii,ii) = Te(ii,ii) + 1 / 4;
     end
   end
@@ -40,7 +42,9 @@ for ii = 1:numFree
   if obstGrid(lIndObst) == 0 %empty
     lIndT = find( freeSites == lIndObst );
     Tl(ii,lIndT) = Tl(ii,lIndT) + 1 / 4;
-    Te(ii,lIndT) = Te(ii,lIndT) + 1 / 4;
+    if epsilonC ~= 0
+      Te(ii,lIndT) = Te(ii,lIndT) + 1 / 4;
+    end
   else
     Tl(ii,ii) = Tl(ii,ii) + 1 / 4;
     if epsilonC ~= 0
@@ -52,21 +56,25 @@ for ii = 1:numFree
   if obstGrid(bIndObst) == 0 %empty
     bIndT = find( freeSites == bIndObst );
     Tl(ii,bIndT) = Tl(ii,bIndT) + 1 / 4;
-    Te(ii,bIndT) = Te(ii,bIndT) - 1 / 4;
+    if epsilonR ~= 0
+      Te(ii,bIndT) = Te(ii,bIndT) - 1 / 4;
+    end
   else
-      Tl(ii,ii) = Tl(ii,ii) + 1 / 4;
+    Tl(ii,ii) = Tl(ii,ii) + 1 / 4;
     if epsilonR ~= 0
       Te(ii,ii) = Te(ii,ii) + 1 / 4;
     end
   end
   % check to above
   uIndObst = sub2ind( [Nr, Nc], mod( rT - 1 -1, Nr ) + 1,  cT );
-  if obstGrid(bIndObst) == 0 %empty
+  if obstGrid(uIndObst) == 0 %empty
     uIndT = find( freeSites == uIndObst );
     Tl(ii,uIndT) = Tl(ii,uIndT) + 1 / 4;
-    Te(ii,uIndT) = Te(ii,uIndT) + 1 / 4;
-   else
-      Tl(ii,ii) = Tl(ii,ii) + 1 / 4;
+    if epsilonR ~= 0
+      Te(ii,uIndT) = Te(ii,uIndT) + 1 / 4;
+    end
+  else
+    Tl(ii,ii) = Tl(ii,ii) + 1 / 4;
     if epsilonR ~= 0
       Te(ii,ii) = Te(ii,ii) - 1 / 4;
     end
@@ -132,3 +140,4 @@ D_paper =  ve_paper' * nl_paper + vl_paper' * ne_paper;
 D_paper2 =  ve_paper' * nl_paper + vl_paper2' * ne_paper2;
 
 nl_test = [ 1/6; 1/6; 1/6; 1/6; 1/6; 1/6];
+
