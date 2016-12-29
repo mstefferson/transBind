@@ -1,25 +1,6 @@
-% function betaMercSlater()
-% Grid
-Nc = 4;
-Nr = 2;
-numGr = Nr * Nc;
-% Temporary epsilon
-epsilonR = 0.1;
-epsilonC = 0;
-bHop = 0;
-% Obstacle Mat
-energyGrid = zeros( Nr, Nc );
-energyGrid(2,1) = inf;
-energyGrid(2,2) = inf;
-obstGrid = zeros( Nr, Nc );
-obstGrid( energyGrid ~= 0 ) = 1;
-% Find free sites
-freeSites = find( obstGrid == 0 );
-numFree = length( freeSites );
-numObst = numGr - numFree;
+function D = genMercSlater( Nr, Nc, numGr, obstGrid, energyGrid, bHop, epsilonR, epsilonC )
 % Build T matrix
 Te = zeros( numGr, numGr );
-%Tl = zeros( numGr, numGr );
 Tl = eye( numGr );
 vl = zeros( numGr, 1 );
 ve = zeros( numGr, 1 );
@@ -108,8 +89,6 @@ for ii = 1:numGr
   end
   % velocity
   if epsilonR ~= 0
-    %vl(ii) = 1 / 4 * ( (1 - obstGrid(bIndObst) ) - );
-    %ve(ii) = 1 / 4 * ( (1 - obstGrid(bIndObst) ) + (1 - obstGrid(uIndObst) ) );
     if siteObst == 1 && bHop == 0
       vl(ii) = 1 / 4 * ( ( 1 - obstGrid(bIndObst) ) - (1 - obstGrid(uIndObst) ) );
       ve(ii) = 1 / 4 * ( ( 1 - obstGrid(bIndObst) ) + (1 - obstGrid(uIndObst) ) );
@@ -140,42 +119,3 @@ b(end) = 1;
 nl = linsolve( Al, b );
 ne = linsolve( Al, -Ae * nl );
 D = ve' * nl + vl' * ne;
-disp(D)
-
-%% from the paper
-
-%% Full mat
-Tl_a = ...
-  [ 1/2 1/2 1/4 0 0 0 1/4 0;...
-    0 1/4 0 0 0 0 0 0;...
-    1/4 0 1/2 1/2 1/4 0 0 0;...
-    0 0 0 1/4 0 0 0 0;...
-    0 0 1/4 0 0 1/2 1/4 0;...
-    0 0 0 1/4 1/2 1/4 0 1/4;
-    1/4 0 0 0 1/4 0 0 1/2;...
-    0 1/4 0 0 0 1/4 1/2 1/4];
-  
- Te_a = ...
-   [ 0 0 -1/4 0 0 0 1/4 0;...
-    0 1/4 0 0 0 0 0 0;....
-    1/4 0 0 0 -1/4 0 0 0;...
-    0 0 0 -1/4 0 0 0 0;...
-    0 0 1/4 0 0 0 -1/4 0;...
-    0 0 0 0 0 -1/4 0 -1/4;...
-    1/4 0 0 0 -1/4 0 0 0;...
-    0 0 0 0 0 1/4 0 1/4 ];
-
-Al_a = Tl_a-eye(8);
-Al_a(end,:) = 1;
-Ae_a = Te_a;
-b = zeros(8,1);
-b(end) = 1;
-
-vl_a = [0; -1/4; 0; 1/4; 0; 1/4; 0; -1/4];
-ve_a = [1/2; 1/4; 1/2; 1/4; 1/2; 1/4; 1/2; 1/4];
-nl_a = linsolve( Al_a, b );
-ne_a = linsolve( Al_a, -Ae_a * nl_a );
-D_a = ve_a' * nl_a + vl_a' * ne_a;
-
-disp(D_a)
-
