@@ -1,15 +1,10 @@
-% function betaMercSlater()
-% Grid
-Nc = 4;
-Nr = 2;
-numGr = Nr * Nc;
-% Temporary epsilon
-epsilonR = 0;
-epsilonC = 0.1;
-% Obstacle Mat
-obstGrid = zeros( Nr, Nc );
-obstGrid(2,1) = 1;
-obstGrid(2,2) = 1;
+function betaMercSlater( Nr, Nc, numGr, obstGrid, epsilonR )
+% fix epsilonC
+if epsilonR == 0
+  epsilonC = 1;
+else
+  epsilonC = 0;
+end
 % Find free sites
 freeSites = find( obstGrid == 0 );
 numFree = length( freeSites );
@@ -19,10 +14,10 @@ Te = zeros( numFree, numFree );
 Tl = zeros( numFree, numFree );
 vl = zeros( numFree, 1 );
 ve = zeros( numFree, 1 );
+% loop over free site to build T matrix
 for ii = 1:numFree
   % find indices
   [rT, cT] = ind2sub( [Nr, Nc], freeSites(ii) );
-  % T matrix
   % check to the right
   rIndObst = sub2ind( [Nr, Nc], rT, mod( cT + 1 - 1, Nc ) + 1);
   if obstGrid(rIndObst) == 0 %empty
