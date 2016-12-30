@@ -1,4 +1,4 @@
-function betaMercSlater( Nr, Nc, numGr, obstGrid, epsilonR )
+function [D] = betaMercSlater( Nr, Nc, numGr, obstGrid, epsilonR )
 % fix epsilonC
 if epsilonR == 0
   epsilonC = 1;
@@ -92,7 +92,6 @@ b(end) = 1;
 nl = linsolve( Al, b );
 ne = linsolve( Al, -Ae * nl );
 D = ve' * nl + vl' * ne;
-disp(D)
 
 %% from the paper
 Tl_paper = ...

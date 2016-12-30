@@ -1,4 +1,10 @@
-function D = genMercSlater( Nr, Nc, numGr, obstGrid, energyGrid, bHop, epsilonR, epsilonC )
+function D = genMercSlater( Nr, Nc, numGr, obstGrid, energyGrid, bHop, epsilonR )
+% fix epsilonC
+if epsilonR == 0
+  epsilonC = 1;
+else
+  epsilonC = 0;
+end
 % Build T matrix
 Te = zeros( numGr, numGr );
 Tl = eye( numGr );
