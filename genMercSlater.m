@@ -6,8 +6,8 @@ else
   epsilonC = 0;
 end
 % Build T matrix
-Te = zeros( numGr, numGr );
-Tl = eye( numGr );
+Te = sparse( numGr, numGr );
+Tl = speye( numGr, numGr );
 vl = zeros( numGr, 1 );
 ve = zeros( numGr, 1 );
 for ii = 1:numGr
@@ -117,11 +117,17 @@ for ii = 1:numGr
   end
 end
 % Solve matrix equation
-Al = Tl-eye(numGr);
+Al = Tl-speye(numGr);
 Al(end,:) = 1;
 Ae = Te;
 b = zeros(numGr,1);
 b(end) = 1;
-nl = linsolve( Al, b );
-ne = linsolve( Al, -Ae * nl );
+%nl = linsolve( Al, b );
+%ne = linsolve( Al, -Ae * nl );
+restart = 40;
+nl = gmres( Al, b, restart);
+ne = gmres( Al, -Ae * nl, restart );
 D = ve' * nl + vl' * ne;
+% Scale it
+D = 2 * D;
+%keyboard

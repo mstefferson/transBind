@@ -1,19 +1,25 @@
 % Grid
-Nc = 4; % number columns
-Nr = 2; % number rows
-numRuns = 10; % number of runs
+nC = 3; % number columns
+nR = 6; % number rows
+numRuns = 1; % number of runs
 % Temporary epsilon
-epsilonR = 0; % row bias. if 0, bias along columns
+epsilonR = 1; % row bias. if 0, bias along columns
 bHop = 0; % Flag for bound motions on or off
-ffo = [0]; % filling fraction of obstacles
+ffo = [0.2]; % filling fraction of obstacles
 be = Inf; % binding energy
 % Calculated things
-numGr = Nr * Nc;
+numGr = nR * nC;
 % Allocate
-energyGrid = zeros( Nr, Nc );
-obstGrid =  zeros( Nr, Nc );
-obstGrid(2,1) = 1; obstGrid(2,2) = 1;
-energyGrid(2,1) = Inf; energyGrid(2,2) = Inf;
+myGrid = 1;
+if myGrid
+  energyGrid = zeros( nR, nC );
+  obstGrid =  zeros( nR, nC );
+  obstGrid(1,3) = 1; 
+  obstGrid(3,:) = 1;
+  obstGrid(4,1) = 1;
+  obstGrid(5,2:3) = 1;
+  energyGrid(obstGrid == 1) = Inf;
+end
 diffMat =  zeros( length(be), length(ffo), numRuns );
 diffMatBeta =  zeros( length(be), length(ffo), numRuns );
 % Loop
@@ -22,11 +28,13 @@ for ii = 1:length(be)
   for jj = 1:length(ffo)
     nObst = round( numGr * ffo(jj) );
     for kk = 1:numRuns
-      %[obstGrid, energyGrid] = placeObstacles( nObst, numGr, beTemp );
-      diffMat(ii,jj,kk) = genMercSlater( Nr, Nc, numGr, ...
+      if ~myGrid
+        [obstGrid, energyGrid] = placeObstacles( nObst, nR, nC, numGr, beTemp );
+      end
+       diffMat(ii,jj,kk) = genMercSlater( nR, nC, numGr, ...
         obstGrid, energyGrid, bHop, epsilonR );
-      diffMatBeta(ii,jj,kk) = betaMercSlater( Nr, Nc, numGr, ...
-        obstGrid, epsilonR );
+       diffMatBeta(ii,jj,kk) = betaMercSlater( nR, nC, numGr, ...
+         obstGrid, epsilonR );
     end
   end
 end
@@ -36,4 +44,6 @@ dStd = std( diffMat, 0, 3 );
 % Average
 dAveBeta = mean( diffMatBeta, 3 );
 dStdBeta = std( diffMatBeta, 0, 3 );
+
+disp(dAve); disp(dAveBeta);
 

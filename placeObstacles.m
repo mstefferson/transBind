@@ -1,8 +1,8 @@
 %place obstacles on seperate lattice sites
-function [obstGrid, energyGrid] = place_obstacles( nObj, numGr, be )
+function [obstGrid, energyGrid] = placeObstacles( nObj, nR, nC, numGr, be )
 % allocate
-energyGrid = zeros( numGr, numGr);
-obstGrid = zeros( numGr, numGr);
+energyGrid = zeros( nR, nC);
+obstGrid = zeros( nR, nC);
 % indices
 inds = randperm( numGr, nObj );
 % place obstacles. No overlap
